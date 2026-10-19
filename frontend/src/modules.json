@@ -1,0 +1,173 @@
+[
+ {
+  "title": "Shop & Tax Profile",
+  "path": "shop-profile",
+  "fields": [
+   {
+    "name": "name",
+    "type": "text"
+   },
+   {
+    "name": "gstin",
+    "type": "text",
+    "placeholder": "22AAAAA0000A1Z5"
+   },
+   {
+    "name": "phone",
+    "type": "text"
+   },
+   {
+    "name": "address",
+    "type": "text"
+   },
+   {
+    "name": "stateCode",
+    "type": "text"
+   },
+   {
+    "name": "upiId",
+    "type": "text",
+    "placeholder": "name@bank"
+   }
+  ]
+ },
+ {
+  "title": "Catalog & Pricing",
+  "path": "products",
+  "fields": [
+   {
+    "name": "name",
+    "type": "text"
+   },
+   {
+    "name": "sku",
+    "type": "text"
+   },
+   {
+    "name": "hsn",
+    "type": "text"
+   },
+   {
+    "name": "price",
+    "type": "number"
+   },
+   {
+    "name": "gstRate",
+    "type": "number"
+   },
+   {
+    "name": "unit",
+    "type": "text"
+   }
+  ]
+ },
+ {
+  "title": "Stock Ledger",
+  "path": "stock",
+  "fields": [
+   {
+    "name": "productId",
+    "type": "number"
+   },
+   {
+    "name": "qty",
+    "type": "number"
+   },
+   {
+    "name": "type",
+    "type": "text"
+   },
+   {
+    "name": "note",
+    "type": "text"
+   }
+  ]
+ },
+ {
+  "title": "Purchasing",
+  "path": "purchases",
+  "fields": [
+   {
+    "name": "supplier",
+    "type": "text"
+   },
+   {
+    "name": "invoiceNo",
+    "type": "text"
+   },
+   {
+    "name": "amount",
+    "type": "number"
+   }
+  ]
+ },
+ {
+  "title": "Customer Khata",
+  "path": "khata",
+  "fields": [
+   {
+    "name": "customerName",
+    "type": "text"
+   },
+   {
+    "name": "phone",
+    "type": "text"
+   },
+   {
+    "name": "amount",
+    "type": "number"
+   },
+   {
+    "name": "type",
+    "type": "text"
+   }
+  ]
+ },
+ {
+  "title": "Payments",
+  "path": "payments",
+  "fields": [
+   {
+    "name": "billNo",
+    "type": "text"
+   },
+   {
+    "name": "mode",
+    "type": "text"
+   },
+   {
+    "name": "amount",
+    "type": "number"
+   },
+   {
+    "name": "reference",
+    "type": "text"
+   }
+  ]
+ },
+ {
+  "title": "Staff Users",
+  "path": "users",
+  "noEdit": true,
+  "fields": [
+   {
+    "name": "username",
+    "type": "text"
+   },
+   {
+    "name": "name",
+    "type": "text"
+   },
+   {
+    "name": "password",
+    "type": "password",
+    "hide": true
+   },
+   {
+    "name": "role",
+    "type": "text",
+    "placeholder": "ADMIN or CASHIER"
+   }
+  ]
+ }
+]

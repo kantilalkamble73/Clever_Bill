@@ -1,0 +1,16 @@
+server:
+  port: 8080
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/cleverpos
+    username: postgres
+    password: postgre123
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+app:
+  jwt-secret: change-this-secret-key-must-be-at-least-32-chars-long
+  ai:
+    key: ${ANTHROPIC_API_KEY:}
+    model: claude-sonnet-5-5
