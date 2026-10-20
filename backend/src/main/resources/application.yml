@@ -3,8 +3,9 @@ server:
 spring:
   datasource:
     url: ${DB_URL:jdbc:postgresql://localhost:5432/cleverpos}
-    username: postgres
-    password: postgre123
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgre123}
+    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: update
