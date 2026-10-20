@@ -50,10 +50,12 @@ public class ReportDetailController {
     List<Map<String,Object>> rows = range.stream().map(b -> { Map<String,Object> r = new LinkedHashMap<>();
       r.put("billNo", b.getBillNo()); r.put("date", b.getCreatedAt().atZone(z).toLocalDate().toString()); r.put("customer", b.getCustomerName());
       r.put("total", b.getTotal()); r.put("gst", b.getGstTotal()); r.put("paid", b.getPaid()); r.put("mode", b.getMode()); r.put("status", b.getStatus()); return r; }).toList();
+    BigDecimal profit = sold.stream().flatMap(b -> b.getItems().stream()).filter(l -> l.getCostPrice() != null)
+      .map(l -> nz(l.getPrice()).subtract(l.getCostPrice()).multiply(BigDecimal.valueOf(l.getQty() == null ? 0 : l.getQty()))).reduce(BigDecimal.ZERO, BigDecimal::add);
     Map<String,Object> m = new LinkedHashMap<>();
     m.put("from", start.toString()); m.put("to", end.toString()); m.put("sales", sales); m.put("gst", sum(sold, Bill::getGstTotal)); m.put("bills", sold.size());
     m.put("avg", sold.isEmpty() ? BigDecimal.ZERO : sales.divide(BigDecimal.valueOf(sold.size()), 2, RoundingMode.HALF_UP));
-    m.put("returns", sum(ret, Bill::getTotal)); m.put("daily", daily); m.put("byMode", byMode); m.put("topProducts", top);
+    m.put("returns", sum(ret, Bill::getTotal)); m.put("profit", profit); m.put("daily", daily); m.put("byMode", byMode); m.put("topProducts", top);
     m.put("khataOwing", owing); m.put("lowStock", low); m.put("rows", rows);
     return m;
   }

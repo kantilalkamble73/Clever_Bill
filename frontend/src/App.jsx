@@ -12,7 +12,7 @@ const NAV = [
   { g: 'Settings', items: [['shop-profile', 'Shop & Tax Profile', 'store'], ['users', 'Staff Users', 'users']] }
 ]
 const CASHIER = ['bills', 'products', 'stock', 'khata', 'payments']
-const MONEY = ['price', 'amount', 'total', 'paid'], BADGES = ['type', 'status', 'mode', 'role']
+const MONEY = ['price', 'costPrice', 'amount', 'total', 'paid'], BADGES = ['type', 'status', 'mode', 'role']
 const cell = (f, r) => { const v = r[f.name]; if (v == null || v === '') return '-'; if (MONEY.includes(f.name)) return inr(v); if (f.name === 'gstRate') return v + '%'; if (BADGES.includes(f.name)) return <Badge v={v} />; return v }
 const day = d => new Date(d).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })
 const Head = ({ title, sub, action }) => <div className="page-head"><div><h1>{title}</h1>{sub && <p className="mute">{sub}</p>}</div>{action}</div>
@@ -120,23 +120,28 @@ function Pos({ canReturn }) {
 }
 
 function Module({ m, cashier }) {
-  const toast = useToast(), [rows, setRows] = useState(null), [form, setForm] = useState(null)
+  const toast = useToast(), [rows, setRows] = useState(null), [form, setForm] = useState(null), [idem, setIdem] = useState(''), [lk, setLk] = useState({})
   const ro = cashier && m.path === 'products', fields = m.fields, shown = fields.filter(f => !f.hide)
   const load = () => api.list(m.path).then(setRows).catch(e => { setRows([]); toast(e.message, 'err') })
-  useEffect(() => { load() }, [])
+  useEffect(() => { load(); fields.filter(f => f.lookup).forEach(f => api.list(f.lookup).then(l => setLk(x => ({ ...x, [f.lookup]: l }))).catch(() => {})) }, [])
+  const open = (r = {}) => { const d = {}; fields.forEach(f => { if (f.options && !r.id) d[f.name] = f.options[0] }); setForm({ ...d, ...r }); setIdem(crypto.randomUUID()) }
+  const nameOf = (f, v) => (lk[f.lookup] || []).find(x => x.id === v)?.name ?? v
   const submit = async e => {
     e.preventDefault(); const row = { ...form }
     fields.forEach(f => { if (f.type === 'number' && row[f.name] !== undefined && row[f.name] !== '') row[f.name] = Number(row[f.name]) })
-    try { await api.save(m.path, row); toast(form.id ? 'Updated' : 'Saved'); setForm(null); load() } catch (x) { toast(x.message, 'err') }
+    try { await api.save(m.path, row, idem); toast(form.id ? 'Updated' : 'Saved'); setForm(null); load() } catch (x) { toast(x.message, 'err') }
   }
-  const cols = shown.map(f => ({ k: f.name, h: label(f.name), num: MONEY.includes(f.name) || ['gstRate', 'qty'].includes(f.name), r: r => cell(f, r) }))
+  const cols = shown.map(f => ({ k: f.name, h: f.label || label(f.name), num: MONEY.includes(f.name) || ['gstRate', 'qty'].includes(f.name), r: r => f.lookup ? (r[f.name] == null ? '-' : nameOf(f, r[f.name])) : cell(f, r) }))
   const ic = NAV.flatMap(g => g.items).find(i => i[0] === m.path)?.[2] || 'box'
-  return (<><Head title={m.title} sub={rows ? rows.length + ' records' : ' '} action={!ro && <button className="btn" onClick={() => setForm({})}><Icon n="plus" size={16} />New</button>} />
-    {rows === null ? <div className="card skel tall" /> : rows.length === 0 ? <Empty icon={ic} title={'No ' + m.title.toLowerCase() + ' yet'} hint="Create the first record to get started." action={!ro && <button className="btn" onClick={() => setForm({})}><Icon n="plus" size={16} />Add new</button>} /> :
-      <DataTable cols={cols} rows={rows} actions={r => <>{!ro && !m.noEdit && <button className="icon-btn" title="Edit" onClick={() => setForm(r)}><Icon n="edit" size={16} /></button>}
+  const input = f => f.lookup ? <select value={form[f.name] ?? ''} onChange={e => setForm({ ...form, [f.name]: e.target.value })}><option value="">Select product</option>{(lk[f.lookup] || []).map(p => <option key={p.id} value={p.id}>{p.name}</option>)}</select>
+    : f.options ? <select value={form[f.name] ?? f.options[0]} onChange={e => setForm({ ...form, [f.name]: e.target.value })}>{f.options.map(o => <option key={o}>{o}</option>)}</select>
+    : <input type={f.type} step="any" placeholder={f.placeholder} value={form[f.name] ?? ''} onChange={e => setForm({ ...form, [f.name]: e.target.value })} />
+  return (<><Head title={m.title} sub={rows ? rows.length + ' records' : ' '} action={!ro && <button className="btn" onClick={() => open()}><Icon n="plus" size={16} />New</button>} />
+    {rows === null ? <div className="card skel tall" /> : rows.length === 0 ? <Empty icon={ic} title={'No ' + m.title.toLowerCase() + ' yet'} hint="Create the first record to get started." action={!ro && <button className="btn" onClick={() => open()}><Icon n="plus" size={16} />Add new</button>} /> :
+      <DataTable cols={cols} rows={rows} actions={r => <>{!ro && !m.noEdit && <button className="icon-btn" title="Edit" onClick={() => open(r)}><Icon n="edit" size={16} /></button>}
         {!cashier && <button className="icon-btn danger" title="Delete" onClick={() => window.confirm('Delete this record?') && api.remove(m.path, r.id).then(() => { toast('Deleted'); load() }).catch(e => toast(e.message, 'err'))}><Icon n="trash" size={16} /></button>}</>} />}
     {form && <Drawer title={(form.id ? 'Edit ' : 'New ') + m.title} onClose={() => setForm(null)}><form onSubmit={submit}>
-      {fields.map(f => <label key={f.name}>{label(f.name)}<input type={f.type} step="any" placeholder={f.placeholder} value={form[f.name] ?? ''} onChange={e => setForm({ ...form, [f.name]: e.target.value })} /></label>)}
+      {fields.map(f => <label key={f.name}>{f.label || label(f.name)}{input(f)}</label>)}
       <div className="drawer-foot"><button type="button" className="btn ghost" onClick={() => setForm(null)}>Cancel</button><button className="btn">{form.id ? 'Save changes' : 'Create'}</button></div></form></Drawer>}</>)
 }
 

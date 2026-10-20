@@ -14,8 +14,8 @@ import org.springframework.web.server.ResponseStatusException;
 @RestController @RequestMapping("/api/bills")
 public class BillingController {
   private final BillRepository bills; private final ProductRepository products; private final StockEntryRepository stockRepo;
-  private final KhataEntryRepository khataRepo; private final PaymentRepository payRepo;
-  public BillingController(BillRepository b, ProductRepository p, StockEntryRepository s, KhataEntryRepository k, PaymentRepository pay){
+  private final KhataEntryRepository khataRepo; private final PaymentRepository payRepo; private final com.cleverpos.shop.ShopProfileRepository shops;
+  public BillingController(BillRepository b, ProductRepository p, StockEntryRepository s, KhataEntryRepository k, PaymentRepository pay, com.cleverpos.shop.ShopProfileRepository sh){ shops = sh;
     bills = b; products = p; stockRepo = s; khataRepo = k; payRepo = pay; }
   public record Item(@NotNull Long productId, @NotNull @Positive Integer qty){}
   public record NewBill(String customerName, String customerPhone, @NotEmpty List<@Valid Item> items, BigDecimal paid, String mode){}
@@ -32,14 +32,16 @@ public class BillingController {
     if (key != null) { var ex = bills.findByTenantIdAndIdemKey(t, key); if (ex.isPresent()) return ex.get(); }
     Bill b = new Bill(); b.setTenantId(t); b.setIdemKey(key); b.setCustomerName(n.customerName()); b.setCustomerPhone(n.customerPhone());
     String mode = n.mode() == null ? "CASH" : n.mode(); b.setMode(mode);
+    boolean check = shops.findByTenantIdOrderByIdDesc(t).stream().findFirst().map(x -> "ON".equals(x.getStockCheck())).orElse(false);
     BigDecimal sub = BigDecimal.ZERO, gst = BigDecimal.ZERO;
     for (Item i : n.items()) {
       Product p = products.findById(i.productId()).filter(x -> t.equals(x.getTenantId()))
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown product"));
+      if (check && stockRepo.balance(t, p.getId()) < i.qty()) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not enough stock for " + p.getName() + " (available " + stockRepo.balance(t, p.getId()) + ")");
       BigDecimal base = nz(p.getPrice()).multiply(BigDecimal.valueOf(i.qty()));
       BigDecimal g = base.multiply(nz(p.getGstRate())).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
       BillLine l = new BillLine(); l.setProductId(p.getId()); l.setName(p.getName()); l.setQty(i.qty());
-      l.setPrice(p.getPrice()); l.setGstRate(p.getGstRate()); l.setGstAmount(g); l.setLineTotal(base.add(g));
+      l.setPrice(p.getPrice()); l.setCostPrice(p.getCostPrice()); l.setGstRate(p.getGstRate()); l.setGstAmount(g); l.setLineTotal(base.add(g));
       b.getItems().add(l); sub = sub.add(base); gst = gst.add(g); stock(t, p.getId(), i.qty(), "OUT", "Sale");
     }
     BigDecimal total = sub.add(gst), paid = n.paid() == null ? total : n.paid().min(total).max(BigDecimal.ZERO);

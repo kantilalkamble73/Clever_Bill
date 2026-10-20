@@ -9,6 +9,7 @@ public class Product extends BaseEntity {
   private String sku;
   private String hsn;
   @jakarta.validation.constraints.PositiveOrZero private BigDecimal price;
+  private BigDecimal costPrice;
   private BigDecimal gstRate;
   private String unit;
 }

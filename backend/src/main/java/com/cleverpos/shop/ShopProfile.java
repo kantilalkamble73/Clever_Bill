@@ -11,4 +11,5 @@ public class ShopProfile extends BaseEntity {
   private String address;
   private String stateCode;
   private String upiId;
+  private String stockCheck;
 }

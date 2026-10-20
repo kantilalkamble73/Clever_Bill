@@ -28,6 +28,15 @@
     "name": "upiId",
     "type": "text",
     "placeholder": "name@bank"
+   },
+   {
+    "name": "stockCheck",
+    "type": "text",
+    "options": [
+     "OFF",
+     "ON"
+    ],
+    "label": "Block billing when out of stock"
    }
   ]
  },
@@ -52,6 +61,11 @@
     "type": "number"
    },
    {
+    "name": "costPrice",
+    "type": "number",
+    "label": "Cost price"
+   },
+   {
     "name": "gstRate",
     "type": "number"
    },
@@ -67,7 +81,9 @@
   "fields": [
    {
     "name": "productId",
-    "type": "number"
+    "type": "number",
+    "lookup": "products",
+    "label": "Product"
    },
    {
     "name": "qty",
@@ -75,7 +91,11 @@
    },
    {
     "name": "type",
-    "type": "text"
+    "type": "text",
+    "options": [
+     "IN",
+     "OUT"
+    ]
    },
    {
     "name": "note",
@@ -94,6 +114,17 @@
    {
     "name": "invoiceNo",
     "type": "text"
+   },
+   {
+    "name": "productId",
+    "type": "number",
+    "lookup": "products",
+    "label": "Product"
+   },
+   {
+    "name": "qty",
+    "type": "number",
+    "label": "Quantity"
    },
    {
     "name": "amount",
@@ -119,7 +150,11 @@
    },
    {
     "name": "type",
-    "type": "text"
+    "type": "text",
+    "options": [
+     "CREDIT",
+     "PAYMENT"
+    ]
    }
   ]
  },
@@ -133,7 +168,13 @@
    },
    {
     "name": "mode",
-    "type": "text"
+    "type": "text",
+    "options": [
+     "CASH",
+     "UPI",
+     "CARD",
+     "REFUND"
+    ]
    },
    {
     "name": "amount",
@@ -166,7 +207,11 @@
    {
     "name": "role",
     "type": "text",
-    "placeholder": "ADMIN or CASHIER"
+    "placeholder": "ADMIN or CASHIER",
+    "options": [
+     "ADMIN",
+     "CASHIER"
+    ]
    }
   ]
  }

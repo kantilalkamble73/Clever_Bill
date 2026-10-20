@@ -1,6 +1,9 @@
 server:
   port: 8080
 spring:
+  config:
+    import:
+      - "optional:application-local.yml"
   datasource:
     url: jdbc:postgresql://localhost:5432/cleverpos
     username: postgres
@@ -12,5 +15,6 @@ spring:
 app:
   jwt-secret: change-this-secret-key-must-be-at-least-32-chars-long
   ai:
-    key: ${ANTHROPIC_API_KEY:}
-    model: claude-sonnet-5-5
+    provider: gemini
+    gemini-key: ${GEMINI_API_KEY:}
+    gemini-model: gemini-3.8-flash

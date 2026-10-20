@@ -5,5 +5,5 @@ import lombok.*;
 @Embeddable @Getter @Setter
 public class BillLine {
   private Long productId; private String name; private Integer qty;
-  private BigDecimal price, gstRate, gstAmount, lineTotal;
+  private BigDecimal price, gstRate, gstAmount, lineTotal, costPrice;
 }

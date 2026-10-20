@@ -33,6 +33,7 @@ export function Reports() {
         <div className="card kpi accent"><div className="chip"><Icon n="trend" /></div><span>Net sales</span><b><Num v={d.sales} money /></b><small>{d.bills} bills</small></div>
         <div className="card kpi a2"><div className="chip"><Icon n="receipt" /></div><span>GST collected</span><b><Num v={d.gst} money /></b></div>
         <div className="card kpi warn"><div className="chip"><Icon n="wallet" /></div><span>Average bill</span><b><Num v={d.avg} money /></b></div>
+        <div className="card kpi a2"><div className="chip"><Icon n="trend" /></div><span>Gross profit</span><b><Num v={d.profit} money /></b><small>Where cost price is set</small></div>
         <div className="card kpi danger"><div className="chip"><Icon n="undo" /></div><span>Returns</span><b><Num v={d.returns} money /></b></div></div>
       <div className="split"><div className="card pad"><div className="card-h"><h2>Sales trend</h2></div><Area data={Object.entries(d.daily)} /></div>
         <div className="card pad"><div className="card-h"><h2>Collected by payment mode</h2></div><Bars rows={modes} /></div></div>

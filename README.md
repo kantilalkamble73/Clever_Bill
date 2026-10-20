@@ -15,9 +15,17 @@ OWNER adds ADMIN / CASHIER users in Staff Users. Change `app.jwt-secret` in appl
 - Integrations: UPI deep link + QR, WhatsApp share link, GSTIN validation, rule-based AI insights.
 
 ## AI Assistant
-Set `ANTHROPIC_API_KEY` in the backend environment (optional model override: `app.ai.model`). The assistant sends aggregated shop figures
-(sales, GST, top products, low stock, khata balances with customer names, no phone numbers) to the Anthropic API to answer questions.
-Without the key, the page shows a setup message and the dashboard keeps its rule-based insights.
+Default provider is Google Gemini (free tier). Get a key at aistudio.google.com, then put it in application.yml as `app.ai.gemini-key`
+(or set `GEMINI_API_KEY`) and restart. To use Claude instead, set `provider: claude` and add `app.ai.key` (or `ANTHROPIC_API_KEY`).
+The assistant sends aggregated shop figures (sales, GST, top products, low stock, khata balances with customer names, no phone numbers) to the provider.
+Free-tier requests on Gemini may be used by Google to improve its products, so avoid it if that is a concern.
 
 ## Fonts
 Fonts load from Google Fonts (Plus Jakarta Sans, Inter, Manrope, Sora, Space Grotesk, JetBrains Mono, Noto Sans Devanagari for Hindi/Marathi). Offline, the app falls back to system fonts. Change style and size in Appearance.
+
+## Stock, purchasing and profit
+- Stock Ledger and Purchasing pick products from a dropdown. A purchase with a product and quantity adds stock automatically and updates the product cost price.
+- Shop & Tax Profile > "Block billing when out of stock" = ON makes billing refuse items without enough stock.
+- Every create form sends an Idempotency-Key, so a double click does not save twice.
+- Reports show gross profit for items that have a cost price.
+- AI: `provider: ollama` runs a local free model (install Ollama, run `ollama pull llama3.2`, no key needed).

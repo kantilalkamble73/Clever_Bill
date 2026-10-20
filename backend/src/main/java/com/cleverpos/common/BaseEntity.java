@@ -7,5 +7,6 @@ public abstract class BaseEntity {
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private Long id;
   @Column(nullable = false) private String tenantId;
   @Column(updatable = false) private Instant createdAt;
+  private String idemKey;
   @PrePersist void onCreate(){ createdAt = Instant.now(); }
 }
