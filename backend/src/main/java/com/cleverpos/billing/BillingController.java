@@ -29,10 +29,11 @@ public class BillingController {
   @GetMapping public List<Bill> list(@RequestAttribute("tenantId") String t){ return bills.findByTenantIdOrderByIdDesc(t); }
   @PostMapping @Transactional
   public Bill create(@RequestAttribute("tenantId") String t, @RequestHeader(value="Idempotency-Key", required=false) String key, @Valid @RequestBody NewBill n){
+    var shopRows = shops.lockByTenant(t); // per-shop lock: unique bill numbers, no oversell race
     if (key != null) { var ex = bills.findByTenantIdAndIdemKey(t, key); if (ex.isPresent()) return ex.get(); }
     Bill b = new Bill(); b.setTenantId(t); b.setIdemKey(key); b.setCustomerName(n.customerName()); b.setCustomerPhone(n.customerPhone());
     String mode = n.mode() == null ? "CASH" : n.mode(); b.setMode(mode);
-    boolean check = shops.findByTenantIdOrderByIdDesc(t).stream().findFirst().map(x -> "ON".equals(x.getStockCheck())).orElse(false);
+    boolean check = shopRows.stream().findFirst().map(x -> "ON".equals(x.getStockCheck())).orElse(false);
     BigDecimal sub = BigDecimal.ZERO, gst = BigDecimal.ZERO;
     for (Item i : n.items()) {
       Product p = products.findById(i.productId()).filter(x -> t.equals(x.getTenantId()))
@@ -56,6 +57,7 @@ public class BillingController {
   }
   @PostMapping("/{id}/return") @Transactional
   public Bill giveReturn(@RequestAttribute("tenantId") String t, @PathVariable Long id){
+    shops.lockByTenant(t);
     Bill b = bills.findById(id).filter(x -> t.equals(x.getTenantId())).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Bill not found"));
     if ("RETURNED".equals(b.getStatus())) throw new ResponseStatusException(HttpStatus.CONFLICT, "Bill already returned");
     for (BillLine l : b.getItems()) stock(t, l.getProductId(), l.getQty(), "IN", "Return " + b.getBillNo());

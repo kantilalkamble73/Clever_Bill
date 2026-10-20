@@ -20,7 +20,7 @@ public class AiController {
   private final String provider, claudeKey, claudeModel, geminiKey, geminiModel, ollamaUrl, ollamaModel; private final HttpClient http = HttpClient.newHttpClient();
   public AiController(ReportingController r, ReportDetailController d, ObjectMapper om,
       @Value("${app.ai.provider:gemini}") String provider, @Value("${app.ai.key:}") String claudeKey, @Value("${app.ai.model:claude-sonnet-5-5}") String claudeModel,
-      @Value("${app.ai.gemini-key:}") String geminiKey, @Value("${app.ai.gemini-model:gemini-3.8-flash}") String geminiModel,
+      @Value("${app.ai.gemini-key:}") String geminiKey, @Value("${app.ai.gemini-model:gemini-2.5-flash}") String geminiModel,
       @Value("${app.ai.ollama-url:http://localhost:11434}") String ollamaUrl, @Value("${app.ai.ollama-model:llama3.2}") String ollamaModel){
     rep = r; det = d; this.om = om; this.provider = provider.trim().toLowerCase(); this.claudeKey = claudeKey.trim(); this.claudeModel = claudeModel.trim();
     this.geminiKey = geminiKey.trim(); this.geminiModel = geminiModel.trim(); this.ollamaUrl = ollamaUrl.trim(); this.ollamaModel = ollamaModel.trim(); }

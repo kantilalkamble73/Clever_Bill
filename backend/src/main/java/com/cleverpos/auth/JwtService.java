@@ -9,7 +9,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtService {
   private final SecretKey key;
-  public JwtService(@Value("${app.jwt-secret}") String s){ key = Keys.hmacShaKeyFor(s.getBytes(StandardCharsets.UTF_8)); }
+  public JwtService(@Value("${app.jwt-secret}") String s){
+    if (s.startsWith("change-this")) org.slf4j.LoggerFactory.getLogger(JwtService.class).warn("SECURITY: default JWT secret in use. Set the JWT_SECRET environment variable before production.");
+    key = Keys.hmacShaKeyFor(s.getBytes(StandardCharsets.UTF_8)); }
   public String issue(AppUser u){
     return Jwts.builder().subject(u.getUsername()).claim("tenant", u.getTenantId()).claim("role", u.getRole())
       .expiration(new Date(System.currentTimeMillis() + 12 * 3600_000L)).signWith(key).compact(); }

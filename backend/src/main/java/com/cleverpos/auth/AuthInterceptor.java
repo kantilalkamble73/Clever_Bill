@@ -17,10 +17,11 @@ public class AuthInterceptor implements HandlerInterceptor {
     Claims c;
     try { c = jwt.parse(a.substring(7)); } catch (Exception e) { return deny(r, 401, "Session expired, sign in again"); }
     String role = c.get("role", String.class);
+    if (role == null) return deny(r, 401, "Session expired, sign in again");
     q.setAttribute("tenantId", c.get("tenant", String.class)); q.setAttribute("role", role); q.setAttribute("user", c.getSubject());
     boolean write = !m.equals("GET");
     boolean cashierOk = !p.startsWith("/api/users") && !p.startsWith("/api/reports") && !p.startsWith("/api/ai") && !m.equals("DELETE") && !p.endsWith("/return")
-      && (!write || p.startsWith("/api/bills") || p.startsWith("/api/payments") || p.startsWith("/api/khata") || p.startsWith("/api/stock"));
+      && (!write || (m.equals("POST") && (p.startsWith("/api/bills") || p.startsWith("/api/payments") || p.startsWith("/api/khata") || p.startsWith("/api/stock"))));
     boolean ok = role.equals("OWNER") || (role.equals("ADMIN") && !p.startsWith("/api/users")) || (role.equals("CASHIER") && cashierOk);
     return ok || deny(r, 403, "Not allowed for your role");
   }

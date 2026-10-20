@@ -1,11 +1,8 @@
 server:
   port: 8080
 spring:
-  config:
-    import:
-      - "optional:application-local.yml"
   datasource:
-    url: jdbc:postgresql://localhost:5432/cleverpos
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/cleverpos}
     username: postgres
     password: postgre123
   jpa:
@@ -13,8 +10,13 @@ spring:
       ddl-auto: update
     open-in-view: false
 app:
-  jwt-secret: change-this-secret-key-must-be-at-least-32-chars-long
+  jwt-secret: ${JWT_SECRET:change-this-secret-key-must-be-at-least-32-chars-long}
+  timezone: ${APP_TIMEZONE:Asia/Kolkata}
   ai:
     provider: gemini
     gemini-key: ${GEMINI_API_KEY:}
-    gemini-model: gemini-3.8-flash
+    gemini-model: gemini-2.5-flash
+    ollama-url: http://localhost:11434
+    ollama-model: llama3.2
+    key: ${ANTHROPIC_API_KEY:}
+    model: claude-sonnet-5-5

@@ -6,10 +6,10 @@ import { loadPrefs, applyPrefs, effective, Appearance } from './theme.jsx'
 import { Icon, Num, inr, label, Toasts, useToast, Badge, Drawer, Modal, Empty, DataTable } from './ui.jsx'
 
 const NAV = [
-  { g: 'Sales', items: [['dashboard', 'Overview', 'home'], ['bills', 'Billing & Returns', 'receipt'], ['khata', 'Customer Khata', 'book'], ['payments', 'Payments', 'wallet']] },
-  { g: 'Insights', items: [['reports', 'Reports', 'trend'], ['ai', 'AI Assistant', 'spark']] },
-  { g: 'Inventory', items: [['products', 'Catalog & Pricing', 'box'], ['stock', 'Stock Ledger', 'layers'], ['purchases', 'Purchasing', 'cart']] },
-  { g: 'Settings', items: [['shop-profile', 'Shop & Tax Profile', 'store'], ['users', 'Staff Users', 'users']] }
+  { g: 'Sales', c: '#34d399', items: [['dashboard', 'Overview', 'home', '#34d399'], ['bills', 'Billing & Returns', 'receipt', '#60a5fa'], ['khata', 'Customer Khata', 'book', '#fbbf24'], ['payments', 'Payments', 'wallet', '#a78bfa']] },
+  { g: 'Insights', c: '#f472b6', items: [['reports', 'Reports', 'trend', '#f472b6'], ['ai', 'AI Assistant', 'spark', '#22d3ee']] },
+  { g: 'Inventory', c: '#fb923c', items: [['products', 'Catalog & Pricing', 'box', '#fb923c'], ['stock', 'Stock Ledger', 'layers', '#2dd4bf'], ['purchases', 'Purchasing', 'cart', '#f87171']] },
+  { g: 'Settings', c: '#818cf8', items: [['shop-profile', 'Shop & Tax Profile', 'store', '#818cf8'], ['users', 'Staff Users', 'users', '#a3e635']] }
 ]
 const CASHIER = ['bills', 'products', 'stock', 'khata', 'payments']
 const MONEY = ['price', 'costPrice', 'amount', 'total', 'paid'], BADGES = ['type', 'status', 'mode', 'role']
@@ -150,7 +150,7 @@ function Palette({ items, go, onClose }) {
   const key = e => { if (e.key === 'ArrowDown') setI(Math.min(i + 1, list.length - 1)); if (e.key === 'ArrowUp') setI(Math.max(i - 1, 0)); if (e.key === 'Enter' && list[i]) { go(list[i][0]); onClose() } }
   return (<div className="overlay top" onClick={onClose}><div className="palette card" onClick={e => e.stopPropagation()}>
     <div className="search lg"><Icon n="search" size={16} /><input autoFocus placeholder="Jump to a page..." value={q} onChange={e => { setQ(e.target.value); setI(0) }} onKeyDown={key} /></div>
-    {list.map((x, k) => <button key={x[0]} className={'pal' + (k === i ? ' on' : '')} onClick={() => { go(x[0]); onClose() }}><Icon n={x[2]} />{x[1]}</button>)}</div></div>)
+    {list.map((x, k) => <button key={x[0]} className={'pal' + (k === i ? ' on' : '')} style={x[3] ? { '--c': x[3] } : undefined} onClick={() => { go(x[0]); onClose() }}><Icon n={x[2]} />{x[1]}</button>)}</div></div>)
 }
 
 export default function App() {
@@ -181,7 +181,7 @@ export default function App() {
   }, m = mods.find(x => x.path === view), cur = flat.find(i => i[0] === view)
   return (<Toasts.Provider value={push}><div className={'app' + (open ? ' nav-open' : '') + (prefs.collapsed && innerWidth > 860 ? ' collapsed' : '')}>
     <aside className="side"><div className="brand"><div className="logo">C</div><b>Clever POS</b></div>
-      <nav>{groups.map(g => <div key={g.g}><div className="grp">{g.g}</div>{g.items.map(i => <button key={i[0]} className={'nav-i' + (view === i[0] ? ' on' : '')} onClick={() => go(i[0])}><Icon n={i[2]} /><span>{i[1]}</span></button>)}</div>)}</nav>
+      <nav>{groups.map(g => <div key={g.g} className="ng" style={{ '--c': g.c }}><div className="grp"><i className="gdot" />{g.g}</div>{g.items.map(i => <button key={i[0]} title={i[1]} className={'nav-i' + (view === i[0] ? ' on' : '')} style={{ '--c': i[3] }} onClick={() => go(i[0])}><i className="ni"><Icon n={i[2]} size={17} /></i><span>{i[1]}</span></button>)}</div>)}</nav>
       <div className="me"><div className="avatar">{(s.name || '?')[0].toUpperCase()}</div><div><b>{s.name}</b><small>{s.role}</small></div>
         <button className="icon-btn" title="Sign out" onClick={() => { session.clear(); setS(null) }}><Icon n="logout" size={16} /></button></div></aside>
     <div className="scrim" onClick={() => setOpen(false)} />

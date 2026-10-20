@@ -1,0 +1,16 @@
+# Node / Vite
+node_modules/
+dist/
+*.local
+package-lock.json
+npm-debug.log*
+
+# Env
+.env
+.env.*
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

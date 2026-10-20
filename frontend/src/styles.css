@@ -99,3 +99,22 @@ tbody tr:hover{background:var(--s2)}tr:last-child td{border-bottom:0}.num{text-a
 table,.sum,.totals,.legend,.cl{font-variant-numeric:tabular-nums}th{letter-spacing:.06em}.mute,small{line-height:1.45}label{letter-spacing:.01em}
 .fonts{display:grid;grid-template-columns:1fr 1fr;gap:10px}.fbtn{display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--s2);text-align:left}
 .fbtn span{font-size:24px;font-weight:700;color:var(--accent)}.fbtn b{font-size:13px}.fbtn:hover{border-color:var(--accent)}.fbtn.on{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 20%,transparent)}
+
+/* Colourful sidebar: every group and item has its own colour (--c) */
+.ng{--gc:var(--c)}
+.grp{display:flex;align-items:center;gap:8px;color:color-mix(in srgb,var(--c) 70%,var(--mute))}
+.gdot{width:7px;height:7px;border-radius:50%;background:var(--c);box-shadow:0 0 10px var(--c);flex:none}
+.nav-i{--ic:var(--c,var(--accent))}
+.ni{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;flex:none;font-style:normal;color:var(--ic);background:color-mix(in srgb,var(--ic) 15%,transparent);transition:.15s}
+.nav-i svg{color:var(--ic)}
+.nav-i:hover{background:color-mix(in srgb,var(--ic) 9%,var(--s2))}
+.nav-i:hover .ni{background:color-mix(in srgb,var(--ic) 24%,transparent);transform:scale(1.06)}
+.nav-i.on{color:var(--text);background:linear-gradient(90deg,color-mix(in srgb,var(--ic) 20%,var(--s2)),color-mix(in srgb,var(--ic) 5%,var(--s2)))}
+.nav-i.on .ni{background:var(--ic);box-shadow:0 6px 16px -6px var(--ic)}
+.nav-i.on .ni svg,.nav-i.on svg{color:var(--ink-on,#06130f)}
+.nav-i.on::before{background:var(--ic);box-shadow:0 0 12px var(--ic)}
+.nav-i.on span{font-weight:600}
+[data-theme=light] .nav-i{--ic:color-mix(in srgb,var(--c,var(--accent)) 78%,#000)}
+[data-theme=light] .nav-i.on .ni svg,[data-theme=light] .nav-i.on svg{color:#fff}
+.pal svg{color:var(--c,inherit)}.pal.on svg{color:var(--c,var(--accent))}
+.collapsed .nav-i{padding:7px 0}.collapsed .gdot{display:none}.collapsed .ng+.ng{border-top:1px solid var(--line);margin-top:8px;padding-top:8px}
